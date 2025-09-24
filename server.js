@@ -246,6 +246,7 @@ app.post("/admin/upload", requireAdminAuth, upload.single("image"), (req, res) =
 
   fs.writeFileSync(dataPath, JSON.stringify(productsData, null, 4));
   res.redirect("/admin");
+  res.status(501).send("Upload not supported on Vercel serverless function.");
 });
 
 // Delete product - updated for new structure
@@ -264,6 +265,8 @@ app.post('/admin/delete', requireAdminAuth, async (req, res) => {
   fs.writeFileSync(dataPath, JSON.stringify(productsData, null, 4));
 
   res.redirect('/admin');
+
+  res.status(501).send("Delete not supported on Vercel serverless function.");
 });
 
 // Update product - updated to handle type
@@ -288,6 +291,8 @@ app.post('/admin/update', requireAdminAuth, upload.single('image'), async (req, 
 
   fs.writeFileSync(dataPath, JSON.stringify(productsData, null, 4));
   res.redirect('/admin');
+
+  res.status(501).send("Update not supported on Vercel serverless function.");
 });
 
 // ... existing code ...
