@@ -73,7 +73,6 @@ app.get(['/', '/branch', '/collection', '/about', '/contact'], (req, res) => {
 // });
 
 
-
 // Collection routes
 function renderCollection(route, category, title) {
   app.get(route, (req, res) => {
@@ -128,6 +127,15 @@ renderCollection('/gold', 'gold', 'Gold Collection');
 renderCollection('/silver', 'silver', 'Silver Collection');
 renderCollection('/diamond', 'diamond', 'Diamond Collection');
 renderCollection('/gemstone', 'gemstone', 'Gemstone Collection');
+
+app.get('/:name', (req, res) => {
+  const dataPath = path.join(__dirname, 'data', 'products.json');
+  const data = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+  const cat = req.params.name.toLowerCase();
+  if (!data[cat]) return res.status(404).send('Category not found');
+  res.render('category', { category: cat, items: data[cat] });
+});
+
 
 // ============ ADMIN AUTH ============
 app.get('/admin/login', (req, res) => {
