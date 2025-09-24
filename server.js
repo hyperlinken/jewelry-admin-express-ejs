@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-const fs = require('fs');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
@@ -32,33 +31,24 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage });
 
 // Admin credentials
-const ADMIN_CREDENTIALS = {
-  username: 'admin',
-  password: 'admin123' 
-};
+const ADMIN_CREDENTIALS = { username: 'admin', password: 'admin123' };
+
+// In-memory products store (replaceable with DB in future)
+let PRODUCTS = {};
 
 // ============ MIDDLEWARE ============
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
 app.set('view engine', 'ejs');
 app.set('views', path.join(process.cwd(), 'views'));
-
 app.use(express.static(path.join(process.cwd(), 'public')));
 
-app.use(session({
-  secret: 'your_secret_key',
-  resave: false,
-  saveUninitialized: true
-}));
+app.use(session({ secret: 'secret_key', resave: false, saveUninitialized: true }));
 
+// Error handler
 app.use((err, req, res, next) => {
-  if (err instanceof multer.MulterError) {
-    console.error('Multer Error:', err);
-    return res.status(400).send(`File upload error: ${err.message}`);
-  }
-  console.error('Server Error:', err);
-  res.status(500).send('Something broke!');
+  console.error(err);
+  res.status(500).send('Server error');
 });
 
 // ============ ROUTES ============
@@ -68,31 +58,20 @@ app.get(['/', '/branch', '/collection', '/about', '/contact'], (req, res) => {
   res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
 });
 
-// ============ PRODUCT TYPES ============
+// Product types
 const PRODUCT_TYPES = ['Ring', 'Bracelet', 'Necklace', 'Earring', 'Pendant', 'Nose Pin', 'Bangle'];
 
 // ============ COLLECTION ROUTES ============
-async function renderCollection(route, category, title) {
-  app.get(route, async (req, res) => {
-    try {
-      const dataPath = path.join(process.cwd(), 'data', 'products.json');
-      const raw = await fs.promises.readFile(dataPath, 'utf-8');
-      const productsData = JSON.parse(raw);
-      const categoryProducts = productsData[category] || {};
-      
-      // Group products by type
-      const productsByType = {};
-      for (const [id, product] of Object.entries(categoryProducts)) {
-        const type = product.type || 'Uncategorized';
-        if (!productsByType[type]) productsByType[type] = [];
-        productsByType[type].push({...product, id});
-      }
-
-      res.render(category, { title, products: productsByType, productTypes: PRODUCT_TYPES });
-    } catch (err) {
-      console.error("Error reading products file:", err);
-      res.status(500).send("Error loading products");
+function renderCollection(route, category, title) {
+  app.get(route, (req, res) => {
+    const categoryProducts = PRODUCTS[category] || {};
+    const productsByType = {};
+    for (const [id, product] of Object.entries(categoryProducts)) {
+      const type = product.type || 'Uncategorized';
+      if (!productsByType[type]) productsByType[type] = [];
+      productsByType[type].push({ ...product, id });
     }
+    res.render(category, { title, products: productsByType, productTypes: PRODUCT_TYPES });
   });
 }
 
@@ -101,23 +80,14 @@ renderCollection('/silver', 'silver', 'Silver Collection');
 renderCollection('/diamond', 'diamond', 'Diamond Collection');
 renderCollection('/gemstone', 'gemstone', 'Gemstone Collection');
 
-app.get('/:name', async (req, res) => {
-  try {
-    const dataPath = path.join(process.cwd(), 'data', 'products.json');
-    const raw = await fs.promises.readFile(dataPath, 'utf-8');
-    const data = JSON.parse(raw);
-    const cat = req.params.name.toLowerCase();
-    if (!data[cat]) return res.status(404).send('Category not found');
-    res.render('category', { category: cat, items: data[cat] });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error loading products");
-  }
+app.get('/:name', (req, res) => {
+  const cat = req.params.name.toLowerCase();
+  if (!PRODUCTS[cat]) return res.status(404).send('Category not found');
+  res.render('category', { category: cat, items: PRODUCTS[cat] });
 });
 
 // ============ ADMIN AUTH ============
 app.get('/admin/login', (req, res) => res.render('admin-login'));
-
 app.post('/admin/login', (req, res) => {
   const { username, password } = req.body;
   if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
@@ -127,40 +97,68 @@ app.post('/admin/login', (req, res) => {
     res.send('Invalid credentials');
   }
 });
-
 function requireAdminAuth(req, res, next) {
   if (req.session.isAdmin) next();
   else res.redirect('/admin/login');
 }
-
-app.get('/admin/logout', (req, res) => {
-  req.session.destroy(() => res.redirect('/admin/login'));
-});
+app.get('/admin/logout', (req, res) => req.session.destroy(() => res.redirect('/admin/login')));
 
 // Admin dashboard
-app.get('/admin', requireAdminAuth, async (req, res) => {
-  try {
-    const dataPath = path.join(process.cwd(), 'data', 'products.json');
-    const raw = await fs.promises.readFile(dataPath, 'utf-8');
-    const productsData = JSON.parse(raw);
-    res.render('admin', { title: 'Admin Panel', products: productsData });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error loading products");
-  }
+app.get('/admin', requireAdminAuth, (req, res) => {
+  res.render('admin', { title: 'Admin Panel', products: PRODUCTS });
 });
 
 // ============ PRODUCT CRUD ============
+
+// Upload
 app.post("/admin/upload", requireAdminAuth, upload.single("image"), (req, res) => {
-  res.status(501).send("Upload not supported on Vercel serverless function. Use Cloudinary API directly.");
+  const { category, type, name, description, price } = req.body;
+  if (!req.file) return res.status(400).send("No file uploaded");
+
+  if (!PRODUCTS[category]) PRODUCTS[category] = {};
+
+  const id = Date.now().toString();
+  PRODUCTS[category][id] = {
+    id,
+    name,
+    description,
+    price: parseInt(price),
+    type: type || 'Uncategorized',
+    image: req.file.path,
+    public_id: req.file.filename
+  };
+
+  res.redirect('/admin');
 });
 
-app.post("/admin/delete", requireAdminAuth, (req, res) => {
-  res.status(501).send("Delete not supported on Vercel serverless function.");
+// Delete
+app.post('/admin/delete', requireAdminAuth, async (req, res) => {
+  const { category, id } = req.body;
+  const product = PRODUCTS[category]?.[id];
+  if (product?.public_id) await cloudinary.uploader.destroy(product.public_id);
+
+  if (PRODUCTS[category]) delete PRODUCTS[category][id];
+  res.redirect('/admin');
 });
 
-app.post("/admin/update", requireAdminAuth, (req, res) => {
-  res.status(501).send("Update not supported on Vercel serverless function.");
+// Update
+app.post('/admin/update', requireAdminAuth, upload.single('image'), async (req, res) => {
+  const { category, id, type, name, description, price } = req.body;
+  const product = PRODUCTS[category]?.[id];
+  if (!product) return res.status(404).send("Product not found");
+
+  product.name = name;
+  product.description = description;
+  product.price = parseInt(price);
+  product.type = type || 'Uncategorized';
+
+  if (req.file) {
+    if (product.public_id) await cloudinary.uploader.destroy(product.public_id);
+    product.image = req.file.path;
+    product.public_id = req.file.filename;
+  }
+
+  res.redirect('/admin');
 });
 
 // ============ EXPORT ============
