@@ -68,29 +68,27 @@ app.get(['/', '/branch', '/collection', '/about', '/contact'], (req, res) => {
   res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
 });
 
-// Collection routes
-function renderCollection(route, category, title) {
-  app.get(route, (req, res) => {
-    const dataPath = path.join(process.cwd(), 'data', 'products.json');
+// ============ PRODUCT TYPES ============
+const PRODUCT_TYPES = ['Ring', 'Bracelet', 'Necklace', 'Earring', 'Pendant', 'Nose Pin', 'Bangle'];
+
+// ============ COLLECTION ROUTES ============
+async function renderCollection(route, category, title) {
+  app.get(route, async (req, res) => {
     try {
-      const productsData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+      const dataPath = path.join(process.cwd(), 'data', 'products.json');
+      const raw = await fs.promises.readFile(dataPath, 'utf-8');
+      const productsData = JSON.parse(raw);
       const categoryProducts = productsData[category] || {};
       
       // Group products by type
       const productsByType = {};
       for (const [id, product] of Object.entries(categoryProducts)) {
         const type = product.type || 'Uncategorized';
-        if (!productsByType[type]) {
-          productsByType[type] = [];
-        }
-        productsByType[type].push({ ...product, id });
+        if (!productsByType[type]) productsByType[type] = [];
+        productsByType[type].push({...product, id});
       }
 
-      res.render(category, {
-        title,
-        products: productsByType,
-        productTypes: PRODUCT_TYPES
-      });
+      res.render(category, { title, products: productsByType, productTypes: PRODUCT_TYPES });
     } catch (err) {
       console.error("Error reading products file:", err);
       res.status(500).send("Error loading products");
@@ -103,18 +101,22 @@ renderCollection('/silver', 'silver', 'Silver Collection');
 renderCollection('/diamond', 'diamond', 'Diamond Collection');
 renderCollection('/gemstone', 'gemstone', 'Gemstone Collection');
 
-app.get('/:name', (req, res) => {
-  const dataPath = path.join(process.cwd(), 'data', 'products.json');
-  const data = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
-  const cat = req.params.name.toLowerCase();
-  if (!data[cat]) return res.status(404).send('Category not found');
-  res.render('category', { category: cat, items: data[cat] });
+app.get('/:name', async (req, res) => {
+  try {
+    const dataPath = path.join(process.cwd(), 'data', 'products.json');
+    const raw = await fs.promises.readFile(dataPath, 'utf-8');
+    const data = JSON.parse(raw);
+    const cat = req.params.name.toLowerCase();
+    if (!data[cat]) return res.status(404).send('Category not found');
+    res.render('category', { category: cat, items: data[cat] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error loading products");
+  }
 });
 
 // ============ ADMIN AUTH ============
-app.get('/admin/login', (req, res) => {
-  res.render('admin-login');
-});
+app.get('/admin/login', (req, res) => res.render('admin-login'));
 
 app.post('/admin/login', (req, res) => {
   const { username, password } = req.body;
@@ -136,33 +138,30 @@ app.get('/admin/logout', (req, res) => {
 });
 
 // Admin dashboard
-app.get('/admin', requireAdminAuth, (req, res) => {
-  const dataPath = path.join(process.cwd(), 'data', 'products.json');
-  const productsData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
-
-  res.render('admin', {
-    title: 'Admin Panel',
-    products: productsData
-  });
+app.get('/admin', requireAdminAuth, async (req, res) => {
+  try {
+    const dataPath = path.join(process.cwd(), 'data', 'products.json');
+    const raw = await fs.promises.readFile(dataPath, 'utf-8');
+    const productsData = JSON.parse(raw);
+    res.render('admin', { title: 'Admin Panel', products: productsData });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error loading products");
+  }
 });
 
 // ============ PRODUCT CRUD ============
-
-// Disable all writes to avoid serverless crash
-app.post("/admin/upload", (req, res) => {
-  res.status(501).send("Upload not supported on Vercel serverless function.");
+app.post("/admin/upload", requireAdminAuth, upload.single("image"), (req, res) => {
+  res.status(501).send("Upload not supported on Vercel serverless function. Use Cloudinary API directly.");
 });
 
-app.post("/admin/delete", (req, res) => {
+app.post("/admin/delete", requireAdminAuth, (req, res) => {
   res.status(501).send("Delete not supported on Vercel serverless function.");
 });
 
-app.post("/admin/update", (req, res) => {
+app.post("/admin/update", requireAdminAuth, (req, res) => {
   res.status(501).send("Update not supported on Vercel serverless function.");
 });
-
-// ============ CONFIG ============
-const PRODUCT_TYPES = ['Ring', 'Bracelet', 'Necklace', 'Earring', 'Pendant', 'Nose Pin', 'Bangle'];
 
 // ============ EXPORT ============
 module.exports = app;
