@@ -42,9 +42,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(process.cwd(), 'views'));
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(process.cwd(), 'public')));
 
 app.use(session({
   secret: 'your_secret_key',
@@ -65,7 +65,7 @@ app.use((err, req, res, next) => {
 
 // Home
 app.get(['/', '/branch', '/collection', '/about', '/contact'], (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
 });
 
 // app.get(['/', '/collection', '/branch', '/about', '/contact'], (req, res) => {
@@ -76,7 +76,7 @@ app.get(['/', '/branch', '/collection', '/about', '/contact'], (req, res) => {
 // Collection routes
 function renderCollection(route, category, title) {
   app.get(route, (req, res) => {
-    const dataPath = path.join(__dirname, 'data', 'products.json');
+    const dataPath = path.join(process.cwd(), 'data', 'products.json');
     try {
       const productsData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
       res.render(category, {
@@ -92,7 +92,7 @@ function renderCollection(route, category, title) {
 
 // function renderCollection(route, category, title) {
 //   app.get(route, (req, res) => {
-//     const dataPath = path.join(__dirname, 'data', 'products.json');
+//     const dataPath = path.join(process.cwd(), 'data', 'products.json');
 //     try {
 //       const productsData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
 //       const categoryProducts = productsData[category] || {};
@@ -129,7 +129,7 @@ renderCollection('/diamond', 'diamond', 'Diamond Collection');
 renderCollection('/gemstone', 'gemstone', 'Gemstone Collection');
 
 app.get('/:name', (req, res) => {
-  const dataPath = path.join(__dirname, 'data', 'products.json');
+  const dataPath = path.join(process.cwd(), 'data', 'products.json');
   const data = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
   const cat = req.params.name.toLowerCase();
   if (!data[cat]) return res.status(404).send('Category not found');
@@ -163,7 +163,7 @@ app.get('/admin/logout', (req, res) => {
 
 // Admin dashboard
 app.get('/admin', requireAdminAuth, (req, res) => {
-  const dataPath = path.join(__dirname, 'data', 'products.json');
+  const dataPath = path.join(process.cwd(), 'data', 'products.json');
   const productsData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
 
   res.render('admin', {
@@ -187,7 +187,7 @@ const PRODUCT_TYPES = ['Ring', 'Bracelet', 'Necklace', 'Earring', 'Pendant', 'No
 // Collection routes - updated to handle types
 function renderCollection(route, category, title) {
   app.get(route, (req, res) => {
-    const dataPath = path.join(__dirname, 'data', 'products.json');
+    const dataPath = path.join(process.cwd(), 'data', 'products.json');
     try {
       const productsData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
       const categoryProducts = productsData[category] || {};
@@ -224,7 +224,7 @@ app.post("/admin/upload", requireAdminAuth, upload.single("image"), (req, res) =
 
   if (!req.file) return res.status(400).send("No file uploaded.");
 
-  const dataPath = path.join(__dirname, "data", "products.json");
+  const dataPath = path.join(process.cwd(), "data", "products.json");
   const productsData = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
 
   const newProduct = {
@@ -252,7 +252,7 @@ app.post("/admin/upload", requireAdminAuth, upload.single("image"), (req, res) =
 // Delete product - updated for new structure
 app.post('/admin/delete', requireAdminAuth, async (req, res) => {
   const { category, id } = req.body;
-  const dataPath = path.join(__dirname, 'data', 'products.json');
+  const dataPath = path.join(process.cwd(), 'data', 'products.json');
   const productsData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
 
   const product = productsData[category][id];
@@ -272,7 +272,7 @@ app.post('/admin/delete', requireAdminAuth, async (req, res) => {
 // Update product - updated to handle type
 app.post('/admin/update', requireAdminAuth, upload.single('image'), async (req, res) => {
   const { category, id, type, name, description, price } = req.body;
-  const dataPath = path.join(__dirname, 'data', 'products.json');
+  const dataPath = path.join(process.cwd(), 'data', 'products.json');
   const productsData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
 
   const product = productsData[category][id];
