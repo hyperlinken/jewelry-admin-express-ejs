@@ -68,20 +68,28 @@ app.get(['/', '/branch', '/collection', '/about', '/contact'], (req, res) => {
   res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
 });
 
-// app.get(['/', '/collection', '/branch', '/about', '/contact'], (req, res) => {
-//   res.render('index', { title: "Magadh Jewels" });
-// });
-
-
 // Collection routes
 function renderCollection(route, category, title) {
   app.get(route, (req, res) => {
     const dataPath = path.join(process.cwd(), 'data', 'products.json');
     try {
       const productsData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+      const categoryProducts = productsData[category] || {};
+      
+      // Group products by type
+      const productsByType = {};
+      for (const [id, product] of Object.entries(categoryProducts)) {
+        const type = product.type || 'Uncategorized';
+        if (!productsByType[type]) {
+          productsByType[type] = [];
+        }
+        productsByType[type].push({ ...product, id });
+      }
+
       res.render(category, {
         title,
-        products: productsData[category]
+        products: productsByType,
+        productTypes: PRODUCT_TYPES
       });
     } catch (err) {
       console.error("Error reading products file:", err);
@@ -89,39 +97,6 @@ function renderCollection(route, category, title) {
     }
   });
 }
-
-// function renderCollection(route, category, title) {
-//   app.get(route, (req, res) => {
-//     const dataPath = path.join(process.cwd(), 'data', 'products.json');
-//     try {
-//       const productsData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
-//       const categoryProducts = productsData[category] || {};
-
-//       // Group products by type
-//       const productsByType = {};
-//       for (const [id, product] of Object.entries(categoryProducts)) {
-//         const type = product.type || 'Uncategorized';
-//         if (!productsByType[type]) {
-//           productsByType[type] = [];
-//         }
-//         productsByType[type].push({ ...product, id });
-//       }
-
-//       // Always render the SAME file (collection.ejs)
-//       res.render("collection", {
-//         title,
-//         category,
-//         products: productsByType,
-//         productTypes: PRODUCT_TYPES
-//       });
-//     } catch (err) {
-//       console.error("Error reading products file:", err);
-//       res.status(500).send("Error loading products");
-//     }
-//   });
-// }
-
-
 
 renderCollection('/gold', 'gold', 'Gold Collection');
 renderCollection('/silver', 'silver', 'Silver Collection');
@@ -135,7 +110,6 @@ app.get('/:name', (req, res) => {
   if (!data[cat]) return res.status(404).send('Category not found');
   res.render('category', { category: cat, items: data[cat] });
 });
-
 
 // ============ ADMIN AUTH ============
 app.get('/admin/login', (req, res) => {
@@ -174,133 +148,21 @@ app.get('/admin', requireAdminAuth, (req, res) => {
 
 // ============ PRODUCT CRUD ============
 
-// ... existing code ...
-
-// ============ CONFIG ============
-// Add product types configuration
-const PRODUCT_TYPES = ['Ring', 'Bracelet', 'Necklace', 'Earring', 'Pendant', 'Nose Pin', 'Bangle'];
-
-// ... existing code ...
-
-// ============ ROUTES ============
-
-// Collection routes - updated to handle types
-function renderCollection(route, category, title) {
-  app.get(route, (req, res) => {
-    const dataPath = path.join(process.cwd(), 'data', 'products.json');
-    try {
-      const productsData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
-      const categoryProducts = productsData[category] || {};
-      
-      // Group products by type
-      const productsByType = {};
-      for (const [id, product] of Object.entries(categoryProducts)) {
-        const type = product.type || 'Uncategorized';
-        if (!productsByType[type]) {
-          productsByType[type] = [];
-        }
-        productsByType[type].push({...product, id});
-      }
-      
-      res.render(category, {
-        title,
-        products: productsByType,
-        productTypes: PRODUCT_TYPES
-      });
-    } catch (err) {
-      console.error("Error reading products file:", err);
-      res.status(500).send("Error loading products");
-    }
-  });
-}
-
-// ... existing code ...
-
-// ============ PRODUCT CRUD ============
-
-// Upload product - updated to handle type
-app.post("/admin/upload", requireAdminAuth, upload.single("image"), (req, res) => {
-  const { category, type, name, description, price } = req.body;
-
-  if (!req.file) return res.status(400).send("No file uploaded.");
-
-  const dataPath = path.join(process.cwd(), "data", "products.json");
-  const productsData = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
-
-  const newProduct = {
-    id: Date.now(),
-    name,
-    description,
-    price: parseInt(price),
-    type: type || 'Uncategorized',
-    image: req.file.path,
-    public_id: req.file.filename
-  };
-
-  if (!productsData[category]) {
-    productsData[category] = {};
-  }
-
-  // Store products by ID for easier management
-  productsData[category][newProduct.id] = newProduct;
-
-  fs.writeFileSync(dataPath, JSON.stringify(productsData, null, 4));
-  res.redirect("/admin");
+// Disable all writes to avoid serverless crash
+app.post("/admin/upload", (req, res) => {
   res.status(501).send("Upload not supported on Vercel serverless function.");
 });
 
-// Delete product - updated for new structure
-app.post('/admin/delete', requireAdminAuth, async (req, res) => {
-  const { category, id } = req.body;
-  const dataPath = path.join(process.cwd(), 'data', 'products.json');
-  const productsData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
-
-  const product = productsData[category][id];
-
-  if (product && product.public_id) {
-    await cloudinary.uploader.destroy(product.public_id);
-  }
-
-  delete productsData[category][id];
-  fs.writeFileSync(dataPath, JSON.stringify(productsData, null, 4));
-
-  res.redirect('/admin');
-
+app.post("/admin/delete", (req, res) => {
   res.status(501).send("Delete not supported on Vercel serverless function.");
 });
 
-// Update product - updated to handle type
-app.post('/admin/update', requireAdminAuth, upload.single('image'), async (req, res) => {
-  const { category, id, type, name, description, price } = req.body;
-  const dataPath = path.join(process.cwd(), 'data', 'products.json');
-  const productsData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
-
-  const product = productsData[category][id];
-  product.name = name;
-  product.description = description;
-  product.price = parseInt(price);
-  product.type = type || 'Uncategorized';
-
-  if (req.file) {
-    if (product.public_id) {
-      await cloudinary.uploader.destroy(product.public_id);
-    }
-    product.image = req.file.path;
-    product.public_id = req.file.filename;
-  }
-
-  fs.writeFileSync(dataPath, JSON.stringify(productsData, null, 4));
-  res.redirect('/admin');
-
+app.post("/admin/update", (req, res) => {
   res.status(501).send("Update not supported on Vercel serverless function.");
 });
 
-// ... existing code ...
-// ============ START SERVER ============
-// const PORT = process.env.PORT || 3000;
-// app.listen(PORT, () => {
-//   console.log(`✅ Server running on port ${PORT}`);
-// });
+// ============ CONFIG ============
+const PRODUCT_TYPES = ['Ring', 'Bracelet', 'Necklace', 'Earring', 'Pendant', 'Nose Pin', 'Bangle'];
 
+// ============ EXPORT ============
 module.exports = app;
-
