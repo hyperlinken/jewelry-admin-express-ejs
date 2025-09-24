@@ -1,0 +1,82 @@
+{
+    "gold": {
+        "1755541839156": {
+            "id": 1755541839156,
+            "name": "fgfas",
+            "description": "aff",
+            "price": 355,
+            "image": "https://res.cloudinary.com/djtoefz3n/image/upload/v1755541837/jewelry/gold/z6gmspmi9ovhlgq4xqzw.jpg",
+            "public_id": "jewelry/gold/z6gmspmi9ovhlgq4xqzw",
+            "type": "Necklace"
+        },
+        "1755617805688": {
+            "id": 1755617805688,
+            "name": "raj",
+            "description": "wdd",
+            "price": 13313,
+            "type": "Necklace",
+            "image": "https://res.cloudinary.com/djtoefz3n/image/upload/v1755617802/jewelry/gold/wqcgteadexars3txn4wx.jpg",
+            "public_id": "jewelry/gold/wqcgteadexars3txn4wx"
+        },
+        "1756054613774": {
+            "id": 1756054613774,
+            "name": "fjj",
+            "description": "jyfy",
+            "price": 535,
+            "type": "Necklace",
+            "image": "https://res.cloudinary.com/djtoefz3n/image/upload/v1756054610/jewelry/gold/sxq7sq1m60xtgniaclo7.png",
+            "public_id": "jewelry/gold/sxq7sq1m60xtgniaclo7"
+        },
+        "1756058580350": {
+            "id": 1756058580350,
+            "name": "fwa",
+            "description": "fsa",
+            "price": 245,
+            "type": "Ring",
+            "image": "https://res.cloudinary.com/djtoefz3n/image/upload/v1756058577/jewelry/gold/gynn9ltzmk3nbkt5w9bh.png",
+            "public_id": "jewelry/gold/gynn9ltzmk3nbkt5w9bh"
+        }
+    },
+    "silver": {
+        "1755542120131": {
+            "id": 1755542120131,
+            "name": "vish",
+            "description": "gugugiug",
+            "price": 245,
+            "image": "https://res.cloudinary.com/djtoefz3n/image/upload/v1755542118/jewelry/silver/k0lc5izk8djsblhgnyu6.jpg",
+            "public_id": "jewelry/silver/k0lc5izk8djsblhgnyu6",
+            "type": "Ring"
+        }
+    },
+    "diamond": {
+        "1755807040603": {
+            "id": 1755807040603,
+            "name": "gug",
+            "description": "hbjhbh",
+            "price": 87678,
+            "type": "Bracelet",
+            "image": "https://res.cloudinary.com/djtoefz3n/image/upload/v1755807039/jewelry/diamond/ek7cyqzin2zkvxrznou1.png",
+            "public_id": "jewelry/diamond/ek7cyqzin2zkvxrznou1"
+        }
+    },
+    "gemstone": {
+        "1755806892680": {
+            "id": 1755806892680,
+            "name": "guuk",
+            "description": "hggj",
+            "price": 87687,
+            "type": "Ring",
+            "image": "https://res.cloudinary.com/djtoefz3n/image/upload/v1755806891/jewelry/gemstone/dllxpa8yzumg67lkqzsj.png",
+            "public_id": "jewelry/gemstone/dllxpa8yzumg67lkqzsj"
+        },
+        "1756058441519": {
+            "id": 1756058441519,
+            "name": "",
+            "description": "",
+            "price": null,
+            "type": "Ring",
+            "image": "https://res.cloudinary.com/djtoefz3n/image/upload/v1756058438/jewelry/gemstone/qmarvbkfhjt8e2u1rsyx.png",
+            "public_id": "jewelry/gemstone/qmarvbkfhjt8e2u1rsyx"
+        }
+    }
+}

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Magadh Jewels Branches</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Garamond', serif;
+      background-color: #fffdf8;
+      color: #4a3f35;
+    }
+
+    h2 {
+      text-align: center;
+      padding-top: 2rem;
+      font-size: 2rem;
+      font-weight: 600;
+    }
+
+    .branches-container {
+      display: flex;
+      overflow-x: auto;
+      gap: 2rem;
+      padding: 2rem;
+      scroll-behavior: smooth;
+    }
+
+    .branch {
+      min-width: 300px;
+      background-color: #ffffff;
+      border: 1px solid #e6dac8;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+    }
+
+    .branch:hover {
+      transform: scale(1.02);
+    }
+
+    .branch img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .branch h3 {
+      margin: 0.5rem 0;
+      font-size: 1.2rem;
+      color: #a8825e;
+    }
+
+    .branch p {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* Hide scrollbar */
+    .branches-container::-webkit-scrollbar {
+      display: none;
+    }
+    .branches-container {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Our Showrooms</h2>
+
+  <div class="branches-container">
+
+    <div class="branch">
+      <img src="one.png" alt="Surat Head Office">
+      <h3>Head Office – Surat</h3>
+      <p><strong>Magadh Jewels</strong><br>
+        1st Floor, Office no. 115, Shaswat Building,<br>
+        Pipla Sheri, Mahindharpura,<br>
+        Surat, Gujarat - 395003
+      </p>
+    </div>
+
+    <div class="branch">
+      <img src="two.png" alt="Patna Branch">
+      <h3>Patna Branch</h3>
+      <p><strong>Magadh House of Jewels</strong><br>
+        Shop no. 110, Patna One Plaza Mall,<br>
+        New Dak Bunglow,<br>
+        Patna, Bihar - 800001
+      </p>
+    </div>
+
+    <div class="branch">
+      <img src="three.png" alt="Surat Branch">
+      <h3>Surat Branch</h3>
+      <p><strong>Magadh Jewels</strong><br>
+        B-318, Surat Diamond Bourse, Dream City,<br>
+        Khajod,<br>
+        Surat, Gujarat - 395007
+      </p>
+    </div>
+
+  </div>
+
+</body>
+</html>

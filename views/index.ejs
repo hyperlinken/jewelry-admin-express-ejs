@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= title || "MAGADH" %></title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/csss/style.css"/>
+  <link rel="stylesheet" href="/csss/slideshow.css">
+  <link rel="stylesheet" href="/csss/sectionProduct.css">
+  <link rel="stylesheet" href="/csss/contact.css">
+  <link rel="stylesheet" href="/csss/branchsection.css">
+  <link rel="stylesheet" href="/csss/aboutsection.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Inter&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="navbar">
+        <div class="navbar-top">
+            <div class="logo">
+                <a class="logo" href="/">MAGADH</a>
+            </div>
+            <span class="menu-toggle" id="menu-toggle">&#9776;</span>
+        </div>
+        <nav class="nav-links" id="nav-links">
+            <a href="/collection">Collection</a>
+            <a href="/branch">Branch</a>
+            <a href="/about">About Us</a>
+            <a href="/contact">Contact</a>
+
+            <a href="/gold">Gold</a>
+            <a href="/silver">Silver</a>
+            <a href="/diamond">Diamond</a>
+            <a href="/gemstone">GemsStone</a>
+        </nav>
+    </header>
+
+    <div class="slider">
+        <img class="slide-img active" id="Fade_img1" src="/images/1.jpg" />
+        <img class="slide-img" id="Fade_img2" src="/images/2.jpg" />
+
+        <div class="progress-container">
+            <div class="progress-line" data-index="1"></div>
+            <div class="progress-line" data-index="2"></div>
+            <div class="progress-line" data-index="3"></div>
+            <div class="progress-line" data-index="4"></div>
+            <div class="progress-line" data-index="5"></div>
+        </div>
+    </div>
+
+    <!-- Signature Collection -->
+    <div id="toproduct" class="section-divider">
+        <div class="divider-icon">
+            <span class="line"></span>
+                <img src="/icons/diamond.png" alt="diamond" />
+            <span class="line"></span>
+        </div>
+        <h2>Our Signature Collection</h2>
+        <p>Timeless pieces crafted with passion & precision.</p>
+    </div>
+
+    <section id="Products" class="content-section">
+        <div class="grid-container">
+            <div class="box box1">
+                <img src="/productsection/earing.jpg" alt="Earrings">
+                <div class="overlay">
+                    <span class="label">Gold</span>
+                    <a href="/gold" class="explore-btn">Explore More</a>
+                </div>
+            </div>
+
+            <div class="box box2">
+                <img src="/productsection/brracelet.jpg" alt="Gemstone">
+                <div class="overlay">
+                    <span class="label">Gemstone</span>
+                    <a href="/gemstone" class="explore-btn">Explore More</a>
+                </div>
+            </div>
+
+            <div class="box box3">
+                <img src="/productsection/bangles.jpg" alt="Green">
+                <div class="overlay">
+                    <span class="label">Silver</span>
+                    <a href="/silver" class="explore-btn">Explore More</a>
+                </div>
+            </div>
+
+            <div class="box box4">
+                <img src="/productsection/chain.jpg" alt="Bali">
+                <div class="overlay">
+                    <span class="label">Diamond</span>
+                    <a href="/diamond" class="explore-btn">Explore More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Branch Section -->
+    <div id="tobranch" class="section-divider">
+        <div class="divider-icon">
+            <span class="line"></span>
+            <img src="/icons/building.png" alt="building" />
+            <span class="line"></span>
+        </div>
+        <h2>Our Branches</h2>
+        <p>Visit us at our showrooms across India</p>
+    </div>
+
+    <section class="branches-section">
+        <div class="branches-container">
+            <!-- Branch Cards same as before -->
+            ...
+        </div>
+    </section>
+
+    <!-- About Us -->
+    <section id="toinfo" class="about-us" id="about">
+        <div class="container about-container">
+            <div class="about-text">
+                <h2>About Us</h2>
+                <p><strong>Magadh Jewels</strong> has been a symbol of trust, elegance, and excellence since 1997...</p>
+            </div>
+            <div class="about-image">
+                <img src="https://i.ibb.co/4n8bXGd7/Whats-App-Image-2025-07-05-at-12-56-42-AM-1.jpg" alt="About Magadh Jewels">
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="Information" class="content-section">
+        <div id="info-container">
+            <!-- Contact form same as before -->
+        </div>
+    </section>
+
+    <div class="footer-bottom">
+        <p>© 2025 Magadh Jewels. All rights reserved.</p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/script.js"></script>
+</body>
+</html>

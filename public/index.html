@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MAGADH</title>
+
+
+  <link rel="stylesheet" href="csss/style.css"/>
+  <link rel="stylesheet" href="csss/slideshow.css">
+  <link rel="stylesheet" href="csss/sectionProduct.css">
+  <link rel="stylesheet" href="csss/contact.css">
+  <link rel="stylesheet" href="csss/branchsection.css">
+  <link rel="stylesheet" href="csss/aboutsection.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Inter&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <header class="navbar">
+        <div class="navbar-top">
+            <div class="logo">
+                <a class="logo" href="/">MAGADH</a>
+            </div>
+            <span class="menu-toggle" id="menu-toggle">&#9776;</span>
+        </div>
+        <nav class="nav-links" id="nav-links">
+            <a href="/collection" data-target="toproduct">Collection</a>
+            <a href="/branch" data-target="tobranch">Branch</a>
+            <a href="/about" data-target="toinfo">About Us</a>
+            <a href="/contact" data-target="Information">Contact</a>
+            
+            <!-- <a href="#toproduct">Collection</a> -->
+            <!-- <a href="#tobranch">Branch</a> -->
+            <!-- <a href="#toinfo">About Us</a> -->
+            <!-- <a href="#Information">Contact</a> -->
+            <a href="/gold">Gold</a>
+            <a href="/silver">Silver</a>
+            <a href="/diamond">Diamond</a>
+            <a href="/gemstone">GemsStone</a>
+        </nav>
+    </header>
+
+    <div class="slider">
+        <img class="slide-img active" id="Fade_img1" src="images/1.jpg" />
+        <img class="slide-img" id="Fade_img2" src="images/2.jpg" />
+
+        <div class="progress-container">
+            <div class="progress-line" data-index="1"></div>
+            <div class="progress-line" data-index="2"></div>
+            <div class="progress-line" data-index="3"></div>
+            <div class="progress-line" data-index="4"></div>
+            <div class="progress-line" data-index="5"></div>
+        </div>
+    </div>
+
+    <div id="toproduct" class="section-divider">
+        <div class="divider-icon">
+            <span class="line"></span>
+                <img src="icons/diamond.png" alt="diamond" />
+            <span class="line"></span>
+        </div>
+        <h2>Our Signature Collection</h2>
+        <p>Timeless pieces crafted with passion & precision.</p>
+    </div>
+
+    <section id="Products" class="content-section">
+        <div class="grid-container">
+            <div class="box box1">
+            <img src="productsection/earing.jpg" alt="Earrings">
+            <div class="overlay">
+                <span class="label">Gold</span>
+                <a href="/gold" target="_blank" class="explore-btn">Explore More</a>
+            </div>
+            </div>
+
+            <div class="box box2">
+            <img src="productsection/brracelet.jpg" alt="Gemstone">
+            <div class="overlay">
+                <span class="label">Gemstone</span>
+                <a href="/Gemstone" target="_blank" class="explore-btn">Explore More</a>
+            </div>
+            </div>
+
+            <div class="box box3">
+            <img src="productsection/bangles.jpg" alt="Green">
+            <div class="overlay">
+                <span class="label">Silver</span>
+                <a href="/silver" target="_blank" class="explore-btn">Explore More</a>
+            </div>
+            </div>
+
+            <div class="box box4">
+            <img src="productsection/chain.jpg" alt="Bali">
+            <div class="overlay">
+                <span class="label">Diamond</span>
+                <a href="/diamond" target="_blank" class="explore-btn">Explore More</a>   <!--to ejs-->
+            </div>
+            </div>
+        </div>
+    </section>
+
+
+    <div id="tobranch" class="section-divider">
+        <div class="divider-icon">
+            <span class="line"></span>
+            <img src="icons/building.png" alt="diamond" />
+            <span class="line"></span>
+        </div>
+        <h2>Our Branches</h2>
+        <p>Visit us at our showrooms across India</p>
+    </div>
+
+    <section class="branches-section">
+        <div class="branches-container">
+            <!-- Branch Card -->
+            <div class="branch">
+                <img src="test/one.png" alt="Surat Head Office" />
+                <h3>Head Office – Surat</h3>
+                <p>
+                    <strong>Magadh Jewels</strong><br />
+                    1st Floor, Office no. 115, Shaswat Building,<br />
+                    Pipla Sheri, Mahindharpura,<br />
+                    Surat, Gujarat - 395003
+                </p>
+                <div class="map-link">
+                    <span class="pin"></span>
+                    <a href="https://www.google.com/maps?q=Magadh+Jewels+Surat+Gujarat+395003" target="_blank">View on Map</a>
+                </div>
+            </div>
+
+            <!-- Branch Card -->
+            <div class="branch">
+                <img src="test/two.png" alt="Patna Branch" />
+                <h3>Patna Branch</h3>
+                <p>
+                    <strong>Magadh House of Jewels</strong><br />
+                    Shop no. 110, Patna One Plaza Mall,<br />
+                    New Dak Bunglow,<br />
+                    Patna, Bilink4har - 800001
+                </p>
+                <div class="map-link">
+                    <span class="pin"></span>
+                    <a href="https://www.google.com/maps?q=Patna+One+Plaza+Mall+Patna+Bihar+800001" target="_blank">View on Map</a>
+                </div>
+            </div>
+
+            <!-- Branch Card -->
+            <div class="branch">
+                <img src="test/three.png" alt="Surat Branch" />
+                <h3>Surat Branch</h3>
+                <p>
+                    <strong>Magadh Jewels</strong><br />
+                    B-318, Surat Diamond Bourse, Dream City,<br />
+                    Khajod,<br />
+                    Surat, Gujarat - 395007
+                </p>
+                <div class="map-link">
+                    <span class="pin"></span>
+                    <a href="https://www.google.com/maps?q=Surat+Diamond+Bourse+Surat+Gujarat+395007" target="_blank">View on Map</a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="toinfo" class="about-us" id="about">
+        <div class="container about-container">
+            <div class="about-text">
+                <h2>About Us</h2>
+                <p><strong>Magadh Jewels</strong> has been a symbol of trust, elegance, and excellence since 1997. What started as a humble family store is now a hallmark of fine craftsmanship and timeless jewelry design.</p>
+                <p>Each ornament we create is a reflection of our dedication to authenticity, transparency, and customer delight. From bridal collections to daily wear, Magadh Jewels is your one-stop destination for all jewelry needs.</p>
+            </div>
+            <div class="about-image">
+                <img src="https://i.ibb.co/4n8bXGd7/Whats-App-Image-2025-07-05-at-12-56-42-AM-1.jpg" alt="About Magadh Jewels">
+            </div>
+        </div>
+    </section>
+
+    <section id="Information" class="content-section">
+        <div id="info-container">
+            <div class="footer-col">
+            <h4>Contact</h4>
+            <ul>
+                <li><span>📞</span> +91 22 62300916 <strong>(10:00am – 7:00pm)</strong></li>
+                <li><span>📱</span> 9167780916 <strong>(9:00am – 6:00pm)</strong></li>
+                <li>
+                <a href="mailto:care.in@malabargoldanddiamonds.com">
+                    care.in@malabargoldanddiamonds.com
+                </a>
+                </li>
+                <li>
+                Malabar Gold and Diamonds Limited<br>
+                (formerly known as Malabar Gold Limited)<br>
+                Plot No 44, 45, Street Number 14,<br>
+                Marol MIDC Industry Estate,<br>
+                Andheri East, Mumbai - 400093
+                </li>
+            </ul>
+            <div class="social-icons">
+                <a href="#"><img src="icons/facebook.png" alt="Facebook" /></a>
+                <a href="#"><img src="icons/social.png" alt="Whatsapp" /></a>
+                <a href="#"><img src="icons/instagram.png" alt="Instagram" /></a>
+            </div>
+            </div>
+
+            <div class="contact-card">
+            <form class="vertical-form" action="https://submit-form.com/1EHrmAI2I?redirect=thankyou.html" method="POST">
+                <h2>Contact Form</h2>
+
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="email">Email Address</label>
+                <input id="email" name="email" type="email" placeholder="Optional" />
+
+                <label for="phone">Phone Number</label>
+                <input id="phone" name="phone" type="tel" pattern="[0-9]{10}" placeholder="Enter 10-digit number" required />
+
+                <label for="message">Your Message</label>
+                <textarea id="message" name="message" required></textarea>
+
+                <button type="submit">Submit</button>
+            </form>
+            </div>
+        </div>
+    </section>
+
+    <div class="footer-bottom">
+            <!-- <div class="payment-icons">
+            <img src="icons/visa.png" alt="Visa">
+            <img src="icons/mastercard.png" alt="MasterCard">
+            <img src="icons/amex.png" alt="American Express">
+            <img src="icons/netbanking.png" alt="Net Banking">
+            <img src="icons/cod.png" alt="Cash on Delivery">
+            </div> -->
+            <p>© 2025 Magadh Jewels. All rights reserved.</p>
+    </div>
+
+</body>
+
+<script src="js/script.js"></script>
+
+
+</html>

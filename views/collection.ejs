@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MAGADH — <%= title %></title>
+
+  <!-- Global CSS -->
+  <link rel="stylesheet" href="/csss/style.css"/> 
+  <link rel="stylesheet" href="/csss/slideshow.css">
+  <link rel="stylesheet" href="/csss/sectionProduct.css">
+  <link rel="stylesheet" href="/csss/contact.css">
+  <link rel="stylesheet" href="/csss/branchsection.css">
+  <link rel="stylesheet" href="/csss/aboutsection.css">
+
+  <!-- Category specific CSS -->
+  <link rel="stylesheet" href="/css/gold.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="navbar">
+    <div class="navbar-top">
+      <div class="logo">
+        <a class="logo" href="/">MAGADH</a>
+      </div>
+      <span class="menu-toggle" id="menu-toggle">&#9776;</span>
+    </div>
+    <nav class="nav-links" id="nav-links">
+      <a href="/collection" data-target="toproduct">Collection</a>
+      <a href="/branch" data-target="tobranch">Branch</a>
+      <a href="/about" data-target="toinfo">About Us</a>
+      <a href="/contact" data-target="Information">Contact</a>
+      <a href="/gold">Gold</a>
+      <a href="/silver">Silver</a>
+      <a href="/diamond">Diamond</a>
+      <a href="/gemstone">Gemstone</a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="<%= category %>-hero"></section>
+
+  <!-- MAIN CONTENT -->
+  <main class="<%= category %>-wrap">
+    <!-- Sidebar -->
+    <aside class="<%= category %>-sidebar">
+      <h3>Browse Categories</h3>
+      <ul class="<%= category %>-types">
+        <% productTypes.forEach(type => {
+             const productCount = products[type] ? products[type].length : 0;
+             if (productCount > 0) { %>
+          <li>
+            <a href="#<%= type.toLowerCase().replace(' ', '-') %>">
+              <%= type %>s 
+              <span class="<%= category %>-chip"><%= productCount %></span>
+            </a>
+          </li>
+        <% }}); %>
+      </ul>
+    </aside>
+
+    <!-- Product sections -->
+    <section class="<%= category %>-content">
+      <% let hasProducts = false;
+         productTypes.forEach(type => {
+           if (products[type] && products[type].length > 0) {
+             hasProducts = true; %>
+        <section class="<%= category %>-section" id="<%= type.toLowerCase().replace(' ', '-') %>">
+          <header>
+            <h2><%= type %>s</h2>
+            <div class="<%= category %>-count"><%= products[type].length %> designs</div>
+          </header>
+          <div class="<%= category %>-grid">
+            <% products[type].forEach(product => { %>
+              <article class="<%= category %>-card">
+                <img src="<%= product.image %>" alt="<%= product.name %>">
+                <div class="<%= category %>-meta">
+                  <span class="<%= category %>-name"><%= product.name %></span>
+                  <span class="<%= category %>-tag">₹<%= product.price.toLocaleString() %></span>
+                </div>
+              </article>
+            <% }); %>
+          </div>
+        </section>
+      <% }}); %>
+      <% if (!hasProducts) { %>
+        <div class="<%= category %>-section"><p>No <%= title %> available.</p></div>
+      <% } %>
+    </section>
+  </main>
+
+  <!-- Back to top -->
+  <button class="<%= category %>-top" id="backToTop" aria-label="Back to top">↑</button>
+
+  <!-- FOOTER -->
+  <div class="footer-bottom">
+    <p>© 2025 Magadh Jewels. All rights reserved.</p>
+  </div>
+
+  <!-- JS -->
+  <script src="/js/gold.js"></script>
+</body>
+</html>

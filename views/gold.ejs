@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MAGADH — Gold Collection</title>
+
+  <!-- External CSS (same as HTML) -->
+  <link rel="stylesheet" href="/csss/style.css"/> 
+  <link rel="stylesheet" href="/csss/slideshow.css">
+  <link rel="stylesheet" href="/csss/sectionProduct.css">
+  <link rel="stylesheet" href="/csss/contact.css">
+  <link rel="stylesheet" href="/csss/branchsection.css">
+  <link rel="stylesheet" href="/csss/aboutsection.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- Gold page specific style -->
+  <link rel="stylesheet" href="/css/gold.css">
+
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="navbar">
+    <div class="navbar-top">
+      <div class="logo">
+        <a class="logo" href="/">MAGADH</a>
+      </div>
+      <span class="menu-toggle" id="menu-toggle">&#9776;</span>
+    </div>
+    <nav class="nav-links" id="nav-links">
+      <a href="/collection" data-target="toproduct">Collection</a>
+      <a href="/branch" data-target="tobranch">Branch</a>
+      <a href="/about" data-target="toinfo">About Us</a>
+      <a href="/contact" data-target="Information">Contact</a>
+            
+      <!-- <a href="#toproduct">Collection</a> -->
+      <!-- <a href="#tobranch">Branch</a> -->
+      <!-- <a href="#toinfo">About Us</a> -->
+      <!-- <a href="#Information">Contact</a> -->
+      <a href="/gold">Gold</a>
+      <a href="/silver">Silver</a>
+      <a href="/diamond">Diamond</a>
+      <a href="/gemstone">GemsStone</a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="gold-hero">
+    <h1>Gold Collection</h1>
+    <p>Elegant Gold jewelry with timeless appeal</p>
+  </section>
+
+  <!-- MAIN CONTENT -->
+  <main class="gold-wrap">
+    <!-- Sidebar -->
+    <aside class="gold-sidebar">
+      <h3>Browse Categories</h3>
+      <ul class="gold-types" id="goldTypes">
+        <% 
+          const categoryOrder = ['Ring','Bracelet','Necklace','Earring','Pendant','Bangle','Nose Pin' , 'child'];
+          categoryOrder.forEach(category => { 
+            const productCount = products[category] ? products[category].length : 0;
+            if (productCount > 0) {
+        %>
+          <li>
+            <a href="#<%= category.toLowerCase().replace(' ', '-') %>" data-target="<%= category.toLowerCase().replace(' ', '-') %>">
+              <%= category %>s 
+              <span class="gold-chip"><%= productCount %></span>
+            </a>
+          </li>
+        <% }}); %>
+      </ul>
+    </aside>
+
+    <!-- Product sections -->
+    <section class="gold-content" id="goldContent">
+      <% 
+        let hasProducts = false;
+        categoryOrder.forEach(category => { 
+          if (products[category] && products[category].length > 0) { 
+            hasProducts = true;
+      %>
+        <section class="gold-section" id="<%= category.toLowerCase().replace(' ', '-') %>">
+          <header>
+            <h2><%= category %>s</h2>
+            <div class="gold-count"><%= products[category].length %> designs</div>
+          </header>
+          <div class="gold-grid">
+            <% products[category].forEach(product => { %>
+              <article class="gold-card">
+                <img src="<%= product.image %>" alt="<%= product.name %>">
+                <div class="gold-meta">
+                  <span class="gold-name"><%= product.name %></span>
+                  <span class="gold-tag">₹<%= product.price.toLocaleString() %></span>
+                </div>
+              </article>
+            <% }); %>
+          </div>
+        </section>
+      <% }}); %>
+      <% if (!hasProducts) { %>
+        <div class="gold-section"><p>No gold products available.</p></div>
+      <% } %>
+    </section>
+  </main>
+
+  <!-- Back to top -->
+  <button class="gold-top" id="backToTop" aria-label="Back to top">↑</button>
+
+  <!-- FOOTER -->
+  <div class="footer-bottom">
+    <p>© 2025 Magadh Jewels. All rights reserved.</p>
+  </div>
+
+  <!-- JS -->
+  <script src="js/gold.js"></script>r
+</body>
+</html>

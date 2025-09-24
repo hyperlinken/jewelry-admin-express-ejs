@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <style>
+        /* ... existing styles ... */
+        
+        .type-filter {
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Admin Panel</h1>
+    <a href="/admin/logout">Logout</a>
+
+    <h2>Upload New Product</h2>
+    <div class="upload-form">
+        <form action="/admin/upload" method="POST" enctype="multipart/form-data">
+            <label>Category:</label>
+            <select name="category" required>
+                <option value="gold">Gold</option>
+                <option value="silver">Silver</option>
+                <option value="diamond">Diamond</option>
+                <option value="gemstone">Gemstone</option>
+            </select><br>
+
+            <label>Product Type:</label>
+            <select name="type" required>
+                <% ['Ring', 'Bracelet', 'Necklace', 'Earring', 'Pendant', 'Nose Pin', 'Bangle' , 'child'].forEach(type => { %>
+                    <option value="<%= type %>"><%= type %></option>
+                <% }); %>
+            </select><br>
+
+            <label>Name:</label>
+            <input type="text" name="name"><br>
+
+            <label>Description:</label>
+            <input type="text" name="description"><br>
+
+            <label>Price:</label>
+            <input type="number" name="price"><br>
+
+            <label>Image:</label>
+            <input type="file" name="image" accept="image/*" required><br>
+
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+
+    <h2>Existing Products</h2>
+    
+    <label for="categoryFilter">Filter by Category:</label>
+    <select id="categoryFilter" class="type-filter">
+        <option value="all">All Categories</option>
+        <option value="gold">Gold</option>
+        <option value="silver">Silver</option>
+        <option value="diamond">Diamond</option>
+        <option value="gemstone">Gemstone</option>
+    </select>
+    
+    <label for="typeFilter">Filter by Type:</label>
+    <select id="typeFilter" class="type-filter">
+        <option value="all">All Types</option>
+        <% ['Ring', 'Bracelet', 'Necklace', 'Earring', 'Pendant', 'Nose Pin', 'Bangle'].forEach(type => { %>
+            <option value="<%= type %>"><%= type %></option>
+        <% }); %>
+    </select>
+    
+    <% for(let category in products) { %>
+        <div class="category" data-category="<%= category %>">
+            <details>
+                <summary><%= category.charAt(0).toUpperCase() + category.slice(1) %> (<%= Object.keys(products[category]).length %>)</summary>
+                <table>
+                    <tr>
+                        <th>Image</th><th>Type</th><th>Name</th><th>Description</th><th>Price</th><th>Actions</th>
+                    </tr>
+                    <% for(let id in products[category]) { 
+                        let p = products[category][id]; %>
+                        <tr data-type="<%= p.type %>">
+                            <td><img src="<%= p.image %>" alt=""></td>
+                            <td><%= p.type %></td>
+                            <td><%= p.name %></td>
+                            <td><%= p.description %></td>
+                            <td>₹<%= p.price %></td>
+                            <td class="action-buttons">
+                                <!-- Delete -->
+                                <form action="/admin/delete" method="POST" onsubmit="return confirm('Delete this product?')">
+                                    <input type="hidden" name="category" value="<%= category %>">
+                                    <input type="hidden" name="id" value="<%= id %>">
+                                    <button type="submit" class="delete-btn">Delete</button>
+                                </form>
+
+                                <!-- Update -->
+                                <form class="update-form" action="/admin/update" method="POST" enctype="multipart/form-data">
+                                    <input type="hidden" name="category" value="<%= category %>">
+                                    <input type="hidden" name="id" value="<%= id %>">
+                                    
+                                    <select name="type">
+                                        <% ['Ring', 'Bracelet', 'Necklace', 'Earring', 'Pendant', 'Nose Pin', 'Bangle'].forEach(type => { %>
+                                            <option value="<%= type %>" <%= p.type === type ? 'selected' : '' %>><%= type %></option>
+                                        <% }); %>
+                                    </select>
+                                    <input type="text" name="name" value="<%= p.name %>" required>
+                                    <input type="text" name="description" value="<%= p.description %>" required>
+                                    <input type="number" name="price" value="<%= p.price %>" required>
+                                    <input type="file" name="image">
+                                    
+                                    <button type="submit">Update</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% } %>
+                </table>
+            </details>
+        </div>
+    <% } %>
+    
+    <script>
+        // Filter products by category and type
+        document.getElementById('categoryFilter').addEventListener('change', filterProducts);
+        document.getElementById('typeFilter').addEventListener('change', filterProducts);
+        
+        function filterProducts() {
+            const categoryValue = document.getElementById('categoryFilter').value;
+            const typeValue = document.getElementById('typeFilter').value;
+            
+            document.querySelectorAll('.category').forEach(category => {
+                const categoryName = category.getAttribute('data-category');
+                
+                if (categoryValue === 'all' || categoryValue === categoryName) {
+                    category.style.display = 'block';
+                    
+                    // Filter rows by type
+                    category.querySelectorAll('tr[data-type]').forEach(row => {
+                        const rowType = row.getAttribute('data-type');
+                        
+                        if (typeValue === 'all' || typeValue === rowType) {
+                            row.style.display = 'table-row';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                } else {
+                    category.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

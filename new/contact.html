@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us | Magadh Jewels</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    .contact-section {
+      background: #fffdf8;
+      padding: 60px 20px;
+    }
+    .contact-section h2 {
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+      color: #a67c52;
+      font-size: 2.2rem;
+      margin-bottom: 30px;
+    }
+    .vertical-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      max-width: 500px;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+      margin: auto;
+    }
+    .vertical-form label {
+      font-weight: 600;
+    }
+    .vertical-form input,
+    .vertical-form textarea {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+      width: 100%;
+    }
+    .vertical-form button {
+      background-color: #c19a6b;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .vertical-form button:hover {
+      background-color: #a67c52;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <img src="https://i.ibb.co/4n8bXGd7/Whats-App-Image-2025-07-05-at-12-56-42-AM-1.jpg" alt="Magadh Jewels Logo" class="logo" />
+      <nav>
+        <ul class="main-nav">
+          <li><a href="index.html">Home</a></li>
+          <li class="dropdown">
+            <a href="#">Catalogue</a>
+            <ul class="dropdown-menu">
+              <li><a href="gold.html">Gold</a></li>
+              <li><a href="diamond.html">Diamond</a></li>
+              <li><a href="silver.html">Silver</a></li>
+              <li><a href="gemstone.html">Gemstone</a></li>
+            </ul>
+          </li>
+          <li><a href="care.html">Care Tips</a></li>
+          <li><a href="contact.html" class="active">Contact Us</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Contact Section -->
+  <section class="contact-section">
+    <h2>Contact Us</h2>
+    <form class="vertical-form" action="https://submit-form.com/1EHrmAI2I?redirect=thankyou.html" method="POST">
+      <label for="first-name">First name</label>
+      <input id="first-name" name="first-name" type="text" required />
+
+      <label for="last-name">Last name</label>
+      <input id="last-name" name="last-name" type="text" required />
+
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" placeholder="Optional" />
+
+      <label for="phone">Phone Number</label>
+      <input id="phone" name="phone" type="tel" pattern="[0-9]{10}" placeholder="Enter 10-digit number" required />
+
+      <label for="message">Message</label>
+      <textarea id="message" name="message" rows="5" required></textarea>
+
+      <button type="submit">Submit</button>
+    </form>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 Magadh Jewels. All rights reserved.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

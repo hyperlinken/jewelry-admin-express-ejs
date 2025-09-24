@@ -1,0 +1,24 @@
+{
+    "gold": [
+        {
+            "id": 1755541839156,
+            "name": "fgfas",
+            "description": "aff",
+            "price": 355,
+            "image": "https://res.cloudinary.com/djtoefz3n/image/upload/v1755541837/jewelry/gold/z6gmspmi9ovhlgq4xqzw.jpg",
+            "public_id": "jewelry/gold/z6gmspmi9ovhlgq4xqzw"
+        }
+    ],
+    "silver": [
+        {
+            "id": 1755542120131,
+            "name": "vish",
+            "description": "gugugiug",
+            "price": 245,
+            "image": "https://res.cloudinary.com/djtoefz3n/image/upload/v1755542118/jewelry/silver/k0lc5izk8djsblhgnyu6.jpg",
+            "public_id": "jewelry/silver/k0lc5izk8djsblhgnyu6"
+        }
+    ],
+    "diamond": [],
+    "gemstone": []
+}
