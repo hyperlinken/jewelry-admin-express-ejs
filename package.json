@@ -13,7 +13,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "memorystore": "^1.6.7",
+    
     "body-parser": "^2.2.0",
     "cloudinary": "^1.41.3",
     "dotenv": "^17.2.1",
@@ -21,7 +21,8 @@
     "express-session": "^1.18.2",
     "multer": "^2.0.2",
     "multer-storage-cloudinary": "^4.0.0",
-    "ejs": "^3.1.9"
+    "ejs": "^3.1.9",
+    "cookie-parser": "^1.4.6"
   },
   "engines": {
     "node": "22.x"

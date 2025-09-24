@@ -1,11 +1,10 @@
 const express = require('express');
 const path = require('path');
 const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
 const bodyParser = require('body-parser');
-const session = require('express-session');
-const MemoryStore = require('memorystore')(session);
+const cookieParser = require('cookie-parser');
+const crypto = require('crypto');
 
 const app = express();
 
@@ -18,7 +17,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET || 'khseu9GGysYqnmUlktMEf9s4aFk'
 });
 
-// In-memory storage for products (serverless compatible)
+// Simple in-memory storage for products
 let productsData = {
   gold: {},
   silver: {},
@@ -26,7 +25,7 @@ let productsData = {
   gemstone: {}
 };
 
-// Mock file storage for serverless environment
+// Memory storage for uploads
 const memoryStorage = multer.memoryStorage();
 const upload = multer({ 
   storage: memoryStorage,
@@ -41,41 +40,40 @@ const ADMIN_CREDENTIALS = {
   password: process.env.ADMIN_PASSWORD || 'admin123'
 };
 
+// Generate a secure secret for tokens
+const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(32).toString('hex');
+
 // Product types
 const PRODUCT_TYPES = ['Ring', 'Bracelet', 'Necklace', 'Earring', 'Pendant', 'Nose Pin', 'Bangle'];
 
 // ============ MIDDLEWARE ============
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Serverless-compatible session storage
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'your_secret_key_change_in_production',
-  resave: false,
-  saveUninitialized: false,
-  store: new MemoryStore({
-    checkPeriod: 86400000 // prune expired entries every 24h
-  }),
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
-}));
+// Simple token-based authentication (serverless compatible)
+function generateToken() {
+  return crypto.randomBytes(16).toString('hex');
+}
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  if (err instanceof multer.MulterError) {
-    console.error('Multer Error:', err);
-    return res.status(400).send(`File upload error: ${err.message}`);
+// Store active tokens in memory (for demo purposes)
+// In production, consider using a proper database
+let activeTokens = new Set();
+
+function requireAdminAuth(req, res, next) {
+  const token = req.cookies.adminToken || req.headers['authorization'];
+  
+  if (token && activeTokens.has(token)) {
+    next();
+  } else {
+    res.redirect('/admin/login');
   }
-  console.error('Server Error:', err);
-  res.status(500).send('Something went wrong!');
-});
+}
 
 // ============ ROUTES ============
 
@@ -119,50 +117,67 @@ renderCollection('/gemstone', 'gemstone', 'Gemstone Collection');
 
 // ============ ADMIN AUTH ============
 app.get('/admin/login', (req, res) => {
-  res.render('admin-login');
+  res.render('admin-login', { error: null });
 });
 
 app.post('/admin/login', (req, res) => {
   const { username, password } = req.body;
+  console.log('Login attempt:', { username, password }); // Debug log
+  
   if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-    req.session.isAdmin = true;
+    const token = generateToken();
+    activeTokens.add(token);
+    
+    // Set cookie that expires in 24 hours
+    res.cookie('adminToken', token, { 
+      maxAge: 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
+    });
+    
+    console.log('Login successful, redirecting to admin'); // Debug log
     res.redirect('/admin');
   } else {
-    res.render('admin-login', { error: 'Invalid credentials' });
+    console.log('Login failed'); // Debug log
+    res.render('admin-login', { 
+      error: 'Invalid credentials. Please try again.' 
+    });
   }
 });
 
-function requireAdminAuth(req, res, next) {
-  if (req.session.isAdmin) {
-    next();
-  } else {
-    res.redirect('/admin/login');
-  }
-}
-
 app.get('/admin/logout', (req, res) => {
-  req.session.destroy(() => res.redirect('/admin/login'));
+  const token = req.cookies.adminToken;
+  if (token) {
+    activeTokens.delete(token);
+  }
+  res.clearCookie('adminToken');
+  res.redirect('/admin/login');
 });
 
 // Admin dashboard
 app.get('/admin', requireAdminAuth, (req, res) => {
   res.render('admin', {
     title: 'Admin Panel',
-    products: productsData
+    products: productsData,
+    error: null,
+    success: null
   });
 });
 
-// ============ PRODUCT CRUD (Serverless Compatible) ============
+// ============ PRODUCT CRUD ============
 
 // Upload product
 app.post("/admin/upload", requireAdminAuth, upload.single("image"), async (req, res) => {
   try {
     const { category, type, name, description, price } = req.body;
+    console.log('Upload request:', { category, type, name }); // Debug log
 
     if (!req.file) {
       return res.status(400).render('admin', { 
         error: "No file uploaded.",
-        products: productsData 
+        products: productsData,
+        success: null
       });
     }
 
@@ -197,12 +212,19 @@ app.post("/admin/upload", requireAdminAuth, upload.single("image"), async (req, 
 
     productsData[category][newProduct.id] = newProduct;
 
-    res.redirect("/admin");
+    res.render('admin', {
+      title: 'Admin Panel',
+      products: productsData,
+      error: null,
+      success: 'Product uploaded successfully!'
+    });
+
   } catch (error) {
     console.error('Upload error:', error);
     res.status(500).render('admin', { 
-      error: "Error uploading product",
-      products: productsData 
+      error: "Error uploading product: " + error.message,
+      products: productsData,
+      success: null
     });
   }
 });
@@ -211,11 +233,13 @@ app.post("/admin/upload", requireAdminAuth, upload.single("image"), async (req, 
 app.post('/admin/delete', requireAdminAuth, async (req, res) => {
   try {
     const { category, id } = req.body;
+    console.log('Delete request:', { category, id }); // Debug log
     
     if (!productsData[category] || !productsData[category][id]) {
       return res.status(404).render('admin', { 
         error: "Product not found",
-        products: productsData 
+        products: productsData,
+        success: null
       });
     }
 
@@ -227,12 +251,20 @@ app.post('/admin/delete', requireAdminAuth, async (req, res) => {
     }
 
     delete productsData[category][id];
-    res.redirect('/admin');
+    
+    res.render('admin', {
+      title: 'Admin Panel',
+      products: productsData,
+      error: null,
+      success: 'Product deleted successfully!'
+    });
+
   } catch (error) {
     console.error('Delete error:', error);
     res.status(500).render('admin', { 
-      error: "Error deleting product",
-      products: productsData 
+      error: "Error deleting product: " + error.message,
+      products: productsData,
+      success: null
     });
   }
 });
@@ -241,11 +273,13 @@ app.post('/admin/delete', requireAdminAuth, async (req, res) => {
 app.post('/admin/update', requireAdminAuth, upload.single('image'), async (req, res) => {
   try {
     const { category, id, type, name, description, price } = req.body;
+    console.log('Update request:', { category, id, name }); // Debug log
     
     if (!productsData[category] || !productsData[category][id]) {
       return res.status(404).render('admin', { 
         error: "Product not found",
-        products: productsData 
+        products: productsData,
+        success: null
       });
     }
 
@@ -280,19 +314,30 @@ app.post('/admin/update', requireAdminAuth, upload.single('image'), async (req, 
       product.public_id = result.public_id;
     }
 
-    res.redirect('/admin');
+    res.render('admin', {
+      title: 'Admin Panel',
+      products: productsData,
+      error: null,
+      success: 'Product updated successfully!'
+    });
+
   } catch (error) {
     console.error('Update error:', error);
     res.status(500).render('admin', { 
-      error: "Error updating product",
-      products: productsData 
+      error: "Error updating product: " + error.message,
+      products: productsData,
+      success: null
     });
   }
 });
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
+  res.status(200).json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    admin: activeTokens.size > 0 ? 'Logged in' : 'Not logged in'
+  });
 });
 
 // 404 handler
